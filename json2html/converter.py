@@ -18,7 +18,18 @@ class JsonToHtmlConverter(object):
         return json.load(open(DATA_FILE_PATH))
 
     def render(self, in_data):
-        return u''.join(map(self.render_node, in_data))
+        if isinstance(in_data, list):
+            item = self.render_list(in_data)
+        else:
+            item = self.render_node(in_data)
+        return item
+
+    def render_list(self, list_data):
+        items = u''.join(map(self.render_list_node, list_data))
+        return u''.join(['<ul>', items, '</ul>'])
+
+    def render_list_node(self, node):
+        return u'<li>%s</li>' % self.render_node(node)
 
     def render_node(self, node):
         return u''.join([u'<%s>%s</%s>' % (i[0], i[1], i[0],) for i in node.items()])
