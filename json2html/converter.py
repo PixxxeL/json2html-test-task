@@ -32,7 +32,14 @@ class JsonToHtmlConverter(object):
         return u'<li>%s</li>' % self.render_node(node)
 
     def render_node(self, node):
-        return u''.join([u'<%s>%s</%s>' % (i[0], i[1], i[0],) for i in node.items()])
+        items = []
+        for k, v in node.items():
+            if isinstance(v, list):
+                item = self.render_list(v)
+            else:
+                item = v
+            items.append(u'<%s>%s</%s>' % (k, item, k,))
+        return u''.join(items)
 
     def _init_log(self):
         self.log = logging.getLogger()
