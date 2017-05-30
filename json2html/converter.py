@@ -8,6 +8,9 @@ from conf import *
 
 class JsonToHtmlConverter(object):
 
+    def __init__(self):
+        self._init_log()
+
     def load(self):
         # можно использовать класс загрузчика вместо прямого вызова загрузки
         # данных. Этот класс может быть полиморфным и загружать данные из разных
@@ -18,11 +21,18 @@ class JsonToHtmlConverter(object):
         return u''.join(map(self.render_node, in_data))
 
     def render_node(self, node):
-        return u'<h1>%(title)s</h1><p>%(body)s</p>' % node
+        return u''.join([u'<%s>%s</%s>' % (i[0], i[1], i[0],) for i in node.items()])
+
+    def _init_log(self):
+        self.log = logging.getLogger()
+        self.log.setLevel(logging.DEBUG)
+        handler = logging.StreamHandler()
+        self.log.addHandler(handler)
 
 
 if __name__ == '__main__':
     # можно парсить коммандную строку для настройки работы программы:
     # указывать источник данных, например и другие специфические параметры
     converter = JsonToHtmlConverter()
-    print converter.render(converter.load())
+    data = converter.render(converter.load())
+    converter.log.info(data)
