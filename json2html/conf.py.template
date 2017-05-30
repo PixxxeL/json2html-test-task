@@ -3,4 +3,10 @@
 import os
 
 
-DATA_FILE_PATH = 'путь до файла/source.json'
+DATA_FILE_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    '..',
+    '..',
+    'data',
+    'source.json'
+)

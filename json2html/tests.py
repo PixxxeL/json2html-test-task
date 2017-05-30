@@ -8,10 +8,10 @@ from converter import JsonToHtmlConverter
 class TestJsonToHtmlConverter(unittest.TestCase):
 
     def test_result(self):
-        data = [{"content": [{"p": "Example 1", "header": "header 1"}], "span": "Title #1"}, {"div": "div 1"}]
+        data = {"p.my-class#my-id": "hello", "p.my-class1.my-class2": "example<a>asd</a>"}
         converter = JsonToHtmlConverter()
         data = converter.render(data)
-        self.assertEqual(data, u'<ul><li><content><ul><li><p>Example 1</p><header>header 1</header></li></ul></content><span>Title #1</span></li><li><div>div 1</div></li></ul>')
+        self.assertEqual(data, u'<p id="my-id" class="my-class">hello</p><p class="my-class1 my-class2">example&lt;a&gt;asd&lt;/a&gt;</p>')
 
 
 if __name__ == '__main__':

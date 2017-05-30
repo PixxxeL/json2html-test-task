@@ -2,11 +2,20 @@
 
 import json
 import logging
+import re
+try:
+    from html import escape  # python 3.x
+except ImportError:
+    from cgi import escape  # python 2.x
 
 from conf import *
 
 
 class JsonToHtmlConverter(object):
+
+    tag_re = re.compile(r'^[^#\.]+')
+    tag_id_re = re.compile(r'\#([^#\.]+)')
+    tag_class_re = re.compile(r'\.([^#\.]+)')
 
     def __init__(self):
         self._init_log()
@@ -37,9 +46,18 @@ class JsonToHtmlConverter(object):
             if isinstance(v, list):
                 item = self.render_list(v)
             else:
-                item = v
-            items.append(u'<%s>%s</%s>' % (k, item, k,))
+                item = escape(v)
+            tag_start, tag_end = self.parse_tag(k)
+            items.append(u'<%s>%s</%s>' % (tag_start, item, tag_end,))
         return u''.join(items)
+
+    def parse_tag(self, tag_raw):
+        tag = self.tag_re.findall(tag_raw)[0]
+        ids = self.tag_id_re.findall(tag_raw)
+        ids = u' id="%s"' % ' '.join(ids) if ids else ''
+        css = self.tag_class_re.findall(tag_raw)
+        css = u' class="%s"' % ' '.join(css) if css else ''
+        return tag + ids + css, tag
 
     def _init_log(self):
         self.log = logging.getLogger()
